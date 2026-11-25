@@ -18,7 +18,7 @@ paths:
       summary: Получить список партий
       description: |
         Возвращает метаданные без PGN, сортировка createdAt DESC, id DESC.
-        total — число всех записей, соответствующих фильтру, до пагинации.
+        total – число всех записей, соответствующих фильтру, до пагинации.
         Пустая база, отсутствие совпадений и страница за пределами списка дают 200 с пустым items.
         Некорректные page и limit (включая пустые, дробные и выходящие за диапазон значения)
         не исправляются автоматически и дают 400. Значения по умолчанию применяются только при отсутствии параметров.
@@ -88,7 +88,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Положительное целое число в диапазоне integer PostgreSQL. Некорректное значение даёт 400, отсутствующая партия с корректным id — 404.
+        description: Положительное целое число в диапазоне integer PostgreSQL. Некорректное значение даёт 400, отсутствующая партия с корректным id – 404.
         schema:
           type: integer
           format: int32
@@ -170,9 +170,9 @@ components:
             отсутствие повторяющихся имён, непустые значения без двойных кавычек,
             обратной косой черты и управляющих символов. Пустая строка между заголовками
             и ходами не обязательна. Присутствующие Date и Result должны отвечать формату ниже.
-            Превышение установленных лимитов PGN (байты UTF-8) или длины имён/события даёт 400.
-            Конкретные лимиты выбираются при реализации, фиксируются в документации и контракте
-            без изменения структуры API. Превышение предела HTTP-тела даёт 413.
+            Размер PGN ограничен 128 КиБ (131072 байта в UTF-8). Значения тегов White,
+            Black и Event ограничены 255 кодовыми точками Unicode каждое. Превышение
+            этих лимитов даёт 400. Превышение предела HTTP-тела в Express (1 МиБ) даёт 413.
             Сервер не проверяет легальность ходов, число партий, варианты, аннотации,
             нестандартную начальную позицию или совпадение Result с маркером ходов.
     GameSummary:
@@ -187,21 +187,21 @@ components:
           maximum: 2147483647
         white:
           type: string
-          description: Из тега White; при отсутствии — '?'.
+          description: Из тега White; при отсутствии – '?'.
         black:
           type: string
-          description: Из тега Black; при отсутствии — '?'.
+          description: Из тега Black; при отсутствии – '?'.
         event:
           type: string
-          description: Из тега Event; при отсутствии — '?'.
+          description: Из тега Event; при отсутствии – '?'.
         date:
           type: string
           pattern: '^(?:[0-9]{4}|\?{4})\.(?:[0-9]{2}|\?{2})\.(?:[0-9]{2}|\?{2})$'
-          description: Из тега Date, текстовая дата PGN (не ISO); при отсутствии — '????.??.??'. Проверяется формат, не календарная корректность.
+          description: Из тега Date, текстовая дата PGN (не ISO); при отсутствии – '????.??.??'. Проверяется формат, не календарная корректность.
         result:
           type: string
           enum: ['1-0', '0-1', '1/2-1/2', '*']
-          description: Из тега Result; при отсутствии — '*'.
+          description: Из тега Result; при отсутствии – '*'.
         createdAt:
           type: string
           format: date-time
@@ -295,25 +295,25 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     GameNotFound:
-      description: GAME_NOT_FOUND — партия с корректным id отсутствует.
+      description: GAME_NOT_FOUND – партия с корректным id отсутствует.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     PayloadTooLarge:
-      description: PAYLOAD_TOO_LARGE — превышен допустимый размер HTTP-тела.
+      description: PAYLOAD_TOO_LARGE – превышен допустимый размер HTTP-тела.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     TooManyRequests:
-      description: TOO_MANY_REQUESTS — превышена допустимая частота запросов.
+      description: TOO_MANY_REQUESTS – превышена допустимая частота запросов.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     InternalError:
-      description: INTERNAL_ERROR — внутренняя ошибка без раскрытия технических подробностей.
+      description: INTERNAL_ERROR – внутренняя ошибка без раскрытия технических подробностей.
       content:
         application/json:
           schema:
