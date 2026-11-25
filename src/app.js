@@ -15,8 +15,9 @@ if (serverUrl) {
 const yaml = serverUrl ? stringify(document) : source;
 const app = express();
 
-app.get('/openapi.yaml', (_req, res) => {
-  res.type('application/yaml').send(yaml);
+app.get('/openapi.yaml', (req, res) => {
+  const type = req.accepts(['application/yaml', 'text/html', 'text/plain']) || 'application/yaml';
+  res.vary('Accept').type(type === 'text/html' ? 'text/plain' : type).send(yaml);
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(document));
